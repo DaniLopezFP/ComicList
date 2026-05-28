@@ -1,0 +1,90 @@
+package com.example.mycomiclist.screens.login
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
+    // Suscripción segura a los LiveData del ViewModel
+    val userName by loginViewModel.userName.observeAsState(initial = "")
+    val password by loginViewModel.password.observeAsState(initial = "")
+
+    // Estado de UI local administrado correctamente por Compose
+    var passVisibility by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "MyComicList",
+            style = MaterialTheme.typography.headlineLarge
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Campo de Texto de Usuario
+        OutlinedTextField(
+            value = userName,
+            onValueChange = { loginViewModel.onLoginChange(it, password) },
+            label = { Text("Usuario") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Campo de Texto de Contraseña
+        OutlinedTextField(
+            value = password,
+            onValueChange = { loginViewModel.onLoginChange(userName, it) },
+            label = { Text("Contraseña") },
+            singleLine = true,
+            visualTransformation = if (passVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                TextButton(onClick = { passVisibility = !passVisibility }) {
+                    Text(if (passVisibility) "Ocultar" else "Mostrar")
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Botón de Envío
+        Button(
+            onClick = {
+                if (userName.isNotBlank() && password.isNotBlank()) {
+                    doLogin(userName)
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Entrar")
+        }
+    }
+}
