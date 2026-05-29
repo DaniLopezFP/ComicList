@@ -28,11 +28,15 @@ class MainActivity : ComponentActivity() {
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )*/
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = colorScheme.background
-                ) {
-                    NavigationWrapper()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        color = colorScheme.background
+                    ) {
+                        NavigationWrapper()
+                    }
                 }
             }
         }

@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -20,9 +23,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.mycomiclist.ui.theme.azul1
+import com.example.mycomiclist.ui.theme.gris1
+import com.example.mycomiclist.ui.theme.naranja1
+import com.example.mycomiclist.ui.theme.rojo1
+import com.example.mycomiclist.ui.theme.verde1
 
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
@@ -42,7 +51,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
     ) {
         Text(
             text = "MyComicList",
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineLarge, color = naranja1
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -50,19 +59,28 @@ fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
         // Campo de Texto de Usuario
         OutlinedTextField(
             value = userName,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = naranja1,
+                unfocusedBorderColor = azul1
+            ),
             onValueChange = { loginViewModel.onLoginChange(it, password) },
-            label = { Text("Usuario") },
+            label = { Text("Usuario", color = gris1) },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
+            modifier = Modifier.fillMaxWidth(),
+
+            )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         // Campo de Texto de Contraseña
         OutlinedTextField(
             value = password,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = naranja1,
+                unfocusedBorderColor = azul1
+            ),
             onValueChange = { loginViewModel.onLoginChange(userName, it) },
-            label = { Text("Contraseña") },
+            label = { Text("Contraseña", color = gris1) },
             singleLine = true,
             visualTransformation = if (passVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -82,6 +100,11 @@ fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
                     doLogin(userName)
                 }
             },
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.White,
+                containerColor = azul1
+            ),
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Entrar")

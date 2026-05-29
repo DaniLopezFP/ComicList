@@ -1,5 +1,6 @@
 package com.example.mycomiclist.screens.comiclist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +24,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 
 
 @Composable
@@ -67,7 +70,17 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(text = "${comic.title} #${comic.volumeNumber}", style = MaterialTheme.typography.titleMedium)
+                            AsyncImage(
+                                model = comic.imageUrl, // Aquí pasas el String de la URL de la web (ej: "https://url.com/imagen.jpg")
+                                contentDescription = comic.title,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .requiredSize(150.dp)
+                            )
+                            Text(
+                                text = "${comic.title} #${comic.volumeNumber}",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Text(text = comic.author, style = MaterialTheme.typography.bodyMedium)
                         }
 

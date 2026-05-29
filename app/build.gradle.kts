@@ -51,13 +51,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.compose.runtime.livedata)
-    // 1. Añadimos la conexión entre ViewModels y Compose (Arregla 'viewModel')
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.navigation.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
-    // 2. Añadimos el ecosistema de Navigation 3 (Arregla 'NavDisplay', 'NavKey', etc.)
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
