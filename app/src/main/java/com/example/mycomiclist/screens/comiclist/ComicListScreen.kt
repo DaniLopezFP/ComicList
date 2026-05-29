@@ -27,6 +27,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
+import com.example.mycomiclist.ui.theme.azul1
+import com.example.mycomiclist.ui.theme.naranja1
 
 
 @Composable
@@ -88,7 +90,7 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
                         Button(
                             onClick = { viewModel.toggleReadStatus(comic.id) },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (comic.isRead) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                                containerColor = if (comic.isRead) azul1 else naranja1
                             )
                         ) {
                             Text(if (comic.isRead) "Leído" else "Pendiente")
