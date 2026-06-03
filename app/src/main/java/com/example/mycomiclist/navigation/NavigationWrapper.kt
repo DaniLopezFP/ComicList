@@ -29,15 +29,19 @@ fun NavigationWrapper() {
         navController = navController,
         startDestination = Login
     ) {
-
         // PANTALLA DE LOGIN
         composable<Login> {
             val loginViewModel: LoginViewModel = viewModel()
 
-            LoginScreen(loginViewModel = loginViewModel) { txtUser ->
-                // Así se navega oficialmente a la siguiente pantalla pasando el parámetro
-                navController.navigate(ComicList(userName = txtUser))
-            }
+            LoginScreen(
+                loginViewModel = loginViewModel,
+                doLogin = { txtUser ->
+                    navController.navigate(ComicList(userName = txtUser))
+                },
+                doRegister = { txtUser ->
+                    navController.navigate(ComicList(userName = txtUser))
+                }
+            )
         }
 
         // PANTALLA DE LISTA DE CÓMICS

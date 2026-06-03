@@ -1,6 +1,8 @@
 package com.example.mycomiclist.screens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -43,7 +48,11 @@ import com.example.mycomiclist.ui.theme.rojo1
 import com.example.mycomiclist.ui.theme.verde1
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel,
+    doLogin: (String) -> Unit,
+    doRegister: (String) -> Unit,
+) {
     // Suscripción segura a los LiveData del ViewModel
     val userName by loginViewModel.userName.observeAsState(initial = "")
     val password by loginViewModel.password.observeAsState(initial = "")
@@ -51,10 +60,14 @@ fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
     // Estado de UI local administrado correctamente por Compose
     var passVisibility by remember { mutableStateOf(false) }
 
+    //Variable para el contexto
+    val myContext = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -88,8 +101,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
             label = { Text("Usuario", color = gris1) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-
-            )
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -113,22 +125,40 @@ fun LoginScreen(loginViewModel: LoginViewModel, doLogin: (String) -> Unit) {
         )
 
         Spacer(modifier = Modifier.height(32.dp))
-
-        // Botón de Envío
-        Button(
-            onClick = {
-                if (userName.isNotBlank() && password.isNotBlank()) {
-                    doLogin(userName)
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color.White,
-                containerColor = azul1
-            ),
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Entrar")
+        Row() {
+            // Botón de Envío
+            Button(
+                onClick = {
+                    if (userName.isNotBlank() && password.isNotBlank()) {
+                        doLogin(userName)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.White,
+                    containerColor = azul1
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Entrar")
+            }
+            // Botón de registro
+            Button(
+                onClick = {
+                    loginViewModel.onRegisterClick(
+                        onSuccess = { email -> doRegister(email) },
+                        onError = { Toast.makeText(myContext, "Fallo de registro", Toast.LENGTH_LONG).show()/* Podrías mostrar un Toast o cambiar un estado de error */ }
+                    )
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.White,
+                    containerColor = azul1
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Registrarse")
+            }
         }
     }
 }

@@ -17,4 +17,17 @@ class LoginViewModel : ViewModel() {
         _userName.value = userName
         _password.value = password
     }
+
+    // NUEVA FUNCIÓN: Lógica preparatoria para el registro con Firebase
+    fun onRegisterClick(onSuccess: (String) -> Unit, onError: () -> Unit) {
+        val currentEmail = _userName.value ?: ""
+        val currentPassword = _password.value ?: ""
+
+        if (currentEmail.isNotBlank() && currentPassword.isNotBlank()) {
+            // Más adelante, aquí irá: auth.createUserWithEmailAndPassword(email, password)...
+            onSuccess(currentEmail)
+        } else {
+            onError()
+        }
+    }
 }
