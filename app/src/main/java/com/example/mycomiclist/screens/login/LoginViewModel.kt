@@ -1,10 +1,12 @@
 package com.example.mycomiclist.screens.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
     // Estados con valor inicial vacío para evitar NullPointerException
     private val _userName = MutableLiveData<String>("")
@@ -30,4 +32,22 @@ class LoginViewModel : ViewModel() {
             onError()
         }
     }
+
+    fun registerUser() {
+        auth.createUserWithEmailAndPassword(
+            _userName.value.toString(),
+            _password.value.toString()
+        ).addOnCompleteListener {
+            Log.i(
+                "Register button",
+                if (it.isSuccessful)
+                    "User registered with ID: ${auth.currentUser?.uid}"
+                else
+                    "Registry failed ${it.exception.toString()}"
+            )
+        }
+    }
 }
+
+
+

@@ -16,18 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.mycomiclist.navigation.NavigationWrapper
 import com.example.mycomiclist.ui.theme.MyComicListTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
+
         enableEdgeToEdge()
         setContent {
             MyComicListTheme {
-                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )*/
+                FirebaseApp.initializeApp(this)
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Surface(
                         modifier = Modifier

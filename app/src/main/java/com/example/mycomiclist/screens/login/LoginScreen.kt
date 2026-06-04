@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -145,10 +146,20 @@ fun LoginScreen(
             // Botón de registro
             Button(
                 onClick = {
-                    loginViewModel.onRegisterClick(
+                    loginViewModel.registerUser()
+                   /* Botón con funcionalidad anterior al registro
+                   loginViewModel.onRegisterClick(
+
                         onSuccess = { email -> doRegister(email) },
-                        onError = { Toast.makeText(myContext, "Fallo de registro", Toast.LENGTH_LONG).show()/* Podrías mostrar un Toast o cambiar un estado de error */ }
+                        onError = {
+                            Toast.makeText(
+                                myContext,
+                                "Fallo de registro",
+                                Toast.LENGTH_LONG
+                            ).show()/* Podrías mostrar un Toast o cambiar un estado de error */
+                        }
                     )
+                   // throw RuntimeException("Test Crash") // Force a crash*/
                 },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
@@ -161,4 +172,19 @@ fun LoginScreen(
             }
         }
     }
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Footer()
+    }
 }
+
+@Composable
+fun Footer() {
+    Text(
+        modifier = Modifier.padding(bottom = 16.dp),
+        text = "Created by Daniel López (v:1.0.0)"
+    )
+}
+

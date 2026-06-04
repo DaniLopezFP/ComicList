@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "9687114009",
+    "project_id": "mycomiclist-71298",
+    "storage_bucket": "mycomiclist-71298.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9687114009:android:358472742ae7c65e6ea588",
+        "android_client_info": {
+          "package_name": "com.example.mycomiclist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd1evCc_LbdqaZG8xCCWKuBZ2RTaBrgnw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

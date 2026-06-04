@@ -1,1 +1,4 @@
 /build
+
+#Ignoramos los archivos de firebase
+google-services.json
