@@ -30,77 +30,7 @@ import coil.compose.AsyncImage
 import com.example.mycomiclist.ui.theme.azul1
 import com.example.mycomiclist.ui.theme.naranja1
 
-/*
-@Composable
-fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
-    // Nos suscribimos a la lista de cómics del ViewModel
-    val comicList by viewModel.comics.observeAsState(initial = emptyList())
 
-    Scaffold(
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)
-                Text(text = "Mis Cómics", style = MaterialTheme.typography.headlineSmall)
-            }
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(comicList) { comic ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (comic.isRead) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            AsyncImage(
-                                model = comic.imageUrl,
-                                contentDescription = comic.title,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .requiredSize(150.dp)
-                            )
-                            Text(
-                                text = "${comic.title} #${comic.volumeNumber}",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(text = comic.author, style = MaterialTheme.typography.bodyMedium)
-                        }
-
-                        // Botón/Checkbox para cambiar el estado de lectura
-                        Button(
-                            onClick = { viewModel.toggleReadStatus(comic.id) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (comic.isRead) azul1 else naranja1
-                            )
-                        ) {
-                            Text(if (comic.isRead) "Leído" else "Pendiente")
-                        }
-                    }
-                }
-            }
-        }
-    }
-}*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
