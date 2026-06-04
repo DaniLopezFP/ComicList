@@ -111,14 +111,17 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
         topBar = {
             TopAppBar(
                 title = {
+                    Column(modifier = Modifier.padding(top = 0.dp)) {
+                        Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)
+
                         Text(text = "Mis Cómics", style = MaterialTheme.typography.headlineSmall)
                     }
+                }
                 }
             )
         }
