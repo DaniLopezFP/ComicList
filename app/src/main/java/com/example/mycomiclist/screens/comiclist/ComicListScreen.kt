@@ -37,29 +37,31 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
     // Nos suscribimos a la lista de cómics del ViewModel
     val comicList by viewModel.comics.observeAsState(initial = emptyList())
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column(modifier = Modifier.padding(top = 0.dp)) {
-                        Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+    /* Scaffold(
+         topBar = {
+             TopAppBar(
+                 title = {*/
+    Column(modifier = Modifier.padding(top = 0.dp)) {
+        Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-                        Text(text = "Mis Cómics", style = MaterialTheme.typography.headlineSmall)
-                    }
-                }
-                }
-            )
+            Text(text = "Mis Cómics", style = MaterialTheme.typography.headlineSmall)
         }
-    ) { paddingValues ->
+
+        /*               }
+                   )
+               }
+           ) { paddingValues ->*/
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                //.padding(paddingValues)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
