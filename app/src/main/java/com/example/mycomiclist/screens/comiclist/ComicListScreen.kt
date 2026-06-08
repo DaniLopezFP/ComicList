@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.composed
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
@@ -41,12 +42,12 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
          topBar = {
              TopAppBar(
                  title = {*/
-    Column(modifier = Modifier.padding(top = 0.dp)) {
-        Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)
+    Column() {
+        Row(modifier = Modifier.padding(start = 10.dp)){Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)}
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 16.dp),
+                .padding(end = 16.dp, start = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {

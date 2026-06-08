@@ -15,6 +15,10 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
     private val _password = MutableLiveData<String>("")
     val password: LiveData<String> = _password
 
+    // ESTADO DE ADVERTENCIA: Para avisar al usuario si el login falla (Requisito)
+    private val _errorMessage = MutableLiveData<String?>(null)
+    val errorMessage: LiveData<String?> = _errorMessage
+
     fun onLoginChange(userName: String, password: String) {
         _userName.value = userName
         _password.value = password
@@ -33,21 +37,44 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
         }
     }
 
-    fun registerUser() {
+    // 1. FUNCIÓN DE LOGIN
+    fun loginUser(navigateToHome: (String) -> Unit) {
+        auth.signInWithEmailAndPassword(
+            _userName.value.toString(),
+            _password.value.toString()
+        ).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i("Login button", "User logged: ${auth.currentUser?.email}")
+                navigateToHome(_userName.value.toString())
+            } else {
+                Log.i("Login button", "User login failed: ${it.exception.toString()}")
+                _errorMessage.value = it.exception?.localizedMessage ?: "Error de autenticación"
+            }
+        }
+    }
+
+    // 2. FUNCIÓN DE REGISTRO (Asegúrate de añadirle el parámetro 'navigateToHome')
+    fun registerUser(navigateToHome: (String) -> Unit) {
         auth.createUserWithEmailAndPassword(
             _userName.value.toString(),
             _password.value.toString()
         ).addOnCompleteListener {
-            Log.i(
-                "Register button",
-                if (it.isSuccessful)
-                    "User registered with ID: ${auth.currentUser?.uid}"
-                else
-                    "Registry failed ${it.exception.toString()}"
-            )
+            if (it.isSuccessful) {
+                Log.i("Register button", "User registered: ${auth.currentUser?.email}")
+                navigateToHome(_userName.value.toString())
+            } else {
+                Log.i("Register button", "User registration failed: ${it.exception.toString()}")
+                _errorMessage.value = it.exception?.localizedMessage ?: "Error en el registro"
+            }
         }
     }
+
+    // Función para limpiar la advertencia desde la UI (por ejemplo, al cerrar un diálogo)
+    fun clearError() {
+        _errorMessage.value = null
+    }
 }
+
 
 
 

@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -63,6 +64,23 @@ fun LoginScreen(
 
     //Variable para el contexto
     val myContext = LocalContext.current
+
+    // Observamos el estado de error que viene de Firebase desde el ViewModel
+    val errorMessage by loginViewModel.errorMessage.observeAsState(initial = null)
+
+    // --- ADVERTENCIA SI FALLA EL LOGIN O REGISTRO ---
+    if (errorMessage != null) {
+        AlertDialog(
+            onDismissRequest = { loginViewModel.clearError() },
+            title = { Text("Fallo de login") },
+            text = { Text(errorMessage!!) },
+            confirmButton = {
+                TextButton(onClick = { loginViewModel.clearError() }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -131,7 +149,12 @@ fun LoginScreen(
             Button(
                 onClick = {
                     if (userName.isNotBlank() && password.isNotBlank()) {
-                        doLogin(userName)
+                        // Llamamos a la función adaptada pasándole el callback de éxito
+                        loginViewModel.loginUser(navigateToHome = { verifiedEmail ->
+                            doLogin(verifiedEmail)
+                        })
+                    } else {
+                        Toast.makeText(myContext, "Rellena los campos", Toast.LENGTH_SHORT).show()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -146,20 +169,14 @@ fun LoginScreen(
             // Botón de registro
             Button(
                 onClick = {
-                    loginViewModel.registerUser()
-                   /* Botón con funcionalidad anterior al registro
-                   loginViewModel.onRegisterClick(
-
-                        onSuccess = { email -> doRegister(email) },
-                        onError = {
-                            Toast.makeText(
-                                myContext,
-                                "Fallo de registro",
-                                Toast.LENGTH_LONG
-                            ).show()/* Podrías mostrar un Toast o cambiar un estado de error */
+                    if (userName.isNotBlank() && password.isNotBlank()) {
+                        // SOLUCIÓN: Pasamos la lambda directa usando 'it' de la misma forma
+                        loginViewModel.registerUser { verifiedEmail ->
+                            doRegister(verifiedEmail)
                         }
-                    )
-                   // throw RuntimeException("Test Crash") // Force a crash*/
+                    } else {
+                        Toast.makeText(myContext, "Rellena los campos", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
