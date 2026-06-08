@@ -1,5 +1,6 @@
 package com.example.mycomiclist.screens.comiclist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,12 +42,13 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
     // Nos suscribimos a la lista de cómics del ViewModel
     val comicList by viewModel.comics.observeAsState(initial = emptyList())
 
-    /* Scaffold(
-         topBar = {
-             TopAppBar(
-                 title = {*/
     Column() {
-        Row(modifier = Modifier.padding(start = 10.dp)){Text(text = "¡Hola, $userName!", style = MaterialTheme.typography.titleMedium)}
+        Row(modifier = Modifier.padding(start = 10.dp)) {
+            Text(
+                text = "¡Hola, $userName!",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,17 +59,11 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
 
             Text(text = "Mis Cómics", style = MaterialTheme.typography.headlineSmall)
         }
-
-        /*               }
-                   )
-               }
-           ) { paddingValues ->*/
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                //.padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize().padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(comicList) { comic ->
                 Card(
@@ -73,45 +72,47 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
                         containerColor = if (comic.isRead) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
                     )
                 ) {
-                    Row(
+
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalAlignment = Alignment.CenterHorizontally // Centramos los elementos
                     ) {
-                        // 1. IMAGEN DE PORTADA (A la izquierda, con tamaño fijo y controlado)
+                        // 1. IMAGEN DE PORTADA
                         AsyncImage(
                             model = comic.imageUrl,
                             contentDescription = comic.title,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(width = 80.dp, height = 120.dp)
-                                .padding(end = 12.dp)
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                //.padding(bottom = 8.dp)
                         )
 
-                        // 2. TEXTOS (En el centro, controlando el peso para evitar colapsar el 'measure')
-                        Column(
-                            modifier = Modifier.weight(1f) // <-- SOLUCIÓN: Absorbe el espacio sobrante de forma segura
-                        ) {
-                            Text(
-                                text = "${comic.title} #${comic.volumeNumber}",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = comic.author,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        // 2. TEXTOS
+                        Text(
+                            text = "${comic.title} #${comic.volumeNumber}",
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = comic.author,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
 
-                        // 3. BOTÓN DE ESTADO (A la derecha)
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // 3. BOTÓN DE ESTADO
                         Button(
                             onClick = { viewModel.toggleReadStatus(comic.id) },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (comic.isRead) azul1 else naranja1
                             ),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 text = if (comic.isRead) "Leído" else "Pendiente",
