@@ -94,14 +94,13 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
                         Text(
                             text = "${comic.title} #${comic.volumeNumber}",
                             style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = comic.author,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1
+                            maxLines = 2
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
