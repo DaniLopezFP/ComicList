@@ -39,7 +39,7 @@ class ComicRepositoryImpl : ComicRepository {
             "Brian Michael Bendis",
             1,
             "https://www.normacomics.com/media/catalog/product/cache/0d53bfb8e6abd9c2bc6a754fde669403/d/i/dinastia-m-marvel-must-have.jpg",
-            true
+            false
         ),
         Comic(
             "5",

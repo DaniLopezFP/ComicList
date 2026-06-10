@@ -2,6 +2,7 @@ package com.example.mycomiclist.screens.login
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,19 +18,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -58,6 +63,9 @@ fun LoginScreen(
     // Suscripción segura a los LiveData del ViewModel
     val userName by loginViewModel.userName.observeAsState(initial = "")
     val password by loginViewModel.password.observeAsState(initial = "")
+    val errorMessage by loginViewModel.errorMessage.observeAsState(initial = null)
+
+    val isLoginError by loginViewModel.isLoginError.observeAsState(false)
 
     // Estado de UI local administrado correctamente por Compose
     var passVisibility by remember { mutableStateOf(false) }
@@ -65,22 +73,17 @@ fun LoginScreen(
     //Variable para el contexto
     val myContext = LocalContext.current
 
-    // Observamos el estado de error que viene de Firebase desde el ViewModel
-    val errorMessage by loginViewModel.errorMessage.observeAsState(initial = null)
-
-    // --- ADVERTENCIA SI FALLA EL LOGIN O REGISTRO ---
-    if (errorMessage != null) {
-        AlertDialog(
-            onDismissRequest = { loginViewModel.clearError() },
-            title = { Text("Fallo de login") },
-            text = { Text(errorMessage!!) },
-            confirmButton = {
-                TextButton(onClick = { loginViewModel.clearError() }) {
-                    Text("Aceptar")
-                }
-            }
-        )
+   //Código para lanzar el toast cuando falla el login
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let { mensajeDeError ->
+            Toast.makeText(myContext, mensajeDeError, Toast.LENGTH_LONG).show()
+            loginViewModel.clearError() // Limpia el estado para poder repetir el aviso
+        }
     }
+    // 🌟 PASAMOS EL NUEVO PARÁMETRO 'isLoginError' A LAS COMPOSABLES SEPARADAS
+    //UserName(userName, isLoginError) { loginViewModel.onLoginChange(it, password) }
+
+    //Password(password, isLoginError) { loginViewModel.onLoginChange(userName, it) }
 
     Column(
         modifier = Modifier
@@ -90,6 +93,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Row() {
             Image(
                 painter = painterResource(id = R.drawable.logo),
@@ -119,6 +123,7 @@ fun LoginScreen(
             onValueChange = { loginViewModel.onLoginChange(it, password) },
             label = { Text("Usuario", color = gris1) },
             singleLine = true,
+            //isError = isLoginError,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -140,6 +145,7 @@ fun LoginScreen(
                     Text(if (passVisibility) "Ocultar" else "Mostrar")
                 }
             },
+            //isError = isLoginError,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -148,11 +154,13 @@ fun LoginScreen(
             // Botón de Envío
             Button(
                 onClick = {
+                   /* if (userName.isNotBlank() && password.isNotBlank()) {
+                        doLogin(userName)
+                    }*/
                     if (userName.isNotBlank() && password.isNotBlank()) {
-                        // Llamamos a la función adaptada pasándole el callback de éxito
-                        loginViewModel.loginUser(navigateToHome = { verifiedEmail ->
-                            doLogin(verifiedEmail)
-                        })
+                        loginViewModel.loginUser { email ->
+                            doLogin(email)
+                        }
                     } else {
                         Toast.makeText(myContext, "Rellena los campos", Toast.LENGTH_SHORT).show()
                     }
@@ -169,10 +177,10 @@ fun LoginScreen(
             // Botón de registro
             Button(
                 onClick = {
+                    //loginViewModel.registerUser()
                     if (userName.isNotBlank() && password.isNotBlank()) {
-                        // SOLUCIÓN: Pasamos la lambda directa usando 'it' de la misma forma
-                        loginViewModel.registerUser { verifiedEmail ->
-                            doRegister(verifiedEmail)
+                        loginViewModel.registerUser { email ->
+                            doRegister(email)
                         }
                     } else {
                         Toast.makeText(myContext, "Rellena los campos", Toast.LENGTH_SHORT).show()

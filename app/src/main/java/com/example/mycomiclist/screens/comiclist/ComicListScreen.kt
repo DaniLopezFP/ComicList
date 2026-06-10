@@ -77,9 +77,9 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally // Centramos los elementos
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 1. IMAGEN DE PORTADA
+                        // IMAGEN DE PORTADA
                         AsyncImage(
                             model = comic.imageUrl,
                             contentDescription = comic.title,
@@ -87,25 +87,27 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(180.dp)
-                                //.padding(bottom = 8.dp)
+
                         )
 
-                        // 2. TEXTOS
+                        // TEXTOS
                         Text(
                             text = "${comic.title} #${comic.volumeNumber}",
                             style = MaterialTheme.typography.titleMedium,
+                            maxLines = 2,
+                            minLines = 2,
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
+                        //Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = comic.author,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2
+                            //maxLines = 2
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // 3. BOTÓN DE ESTADO
+                        // BOTÓN
                         Button(
                             onClick = { viewModel.toggleReadStatus(comic.id) },
                             colors = ButtonDefaults.buttonColors(

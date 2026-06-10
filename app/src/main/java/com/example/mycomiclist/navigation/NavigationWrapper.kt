@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.serialization.Serializable
 
 // --- DESTINOS (Heredando de NavKey de forma estricta) ---
-// Asegúrate de que lleva el símbolo '@' y está justo pegado arriba del destino
 @Serializable
 object Login : NavKey
 
@@ -32,7 +31,6 @@ fun NavigationWrapper() {
     NavDisplay(
         backStack = backStack,
         onBack = {
-            // SOLUCIÓN 1 y 2: Volver atrás usando el comportamiento de listas mutables
             if (backStack.size > 1) {
                 backStack.removeAt(backStack.lastIndex)
             }
@@ -56,7 +54,7 @@ fun NavigationWrapper() {
                     }
                 )
             }
-// --- PANTALLA DE LISTA DE CÓMICS dentro del entryProvider de tu NavigationWrapper.kt ---
+
             // --- PANTALLA DE LISTA DE CÓMICS ---
             entry<ComicList> { destination -> // <-- Nombramos el parámetro directamente como el destino
 
