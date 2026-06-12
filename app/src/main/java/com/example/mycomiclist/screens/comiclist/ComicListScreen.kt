@@ -34,13 +34,24 @@ import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import com.example.mycomiclist.ui.theme.azul1
 import com.example.mycomiclist.ui.theme.naranja1
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.mycomiclist.domain.model.Comic
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
+fun ComicListScreen(
+    viewModel: ComicListViewModel,
+    userName: String,
+    comicListViewModel: ComicListViewModel,
+) {
     // Nos suscribimos a la lista de cómics del ViewModel
-    val comicList by viewModel.comics.observeAsState(initial = emptyList())
+    val comicList by comicListViewModel.comicList.collectAsStateWithLifecycle(initialValue = emptyList())
+    //val comicList: List<Comic> by comicListViewModel.comicList.collectAsStateWithLifecycle(initialValue = emptyList())
+    //val comicList by viewModel.comics.observeAsState(initial = emptyList())
+    val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     Column() {
         Row(modifier = Modifier.padding(start = 10.dp)) {
@@ -61,7 +72,9 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxSize().padding(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -107,18 +120,30 @@ fun ComicListScreen(viewModel: ComicListViewModel, userName: String) {
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // BOTÓN
+                        // Botón de cambio
+                        /* Button(
+                             onClick = { viewModel.toggleReadStatus(comic.id) },
+                             colors = ButtonDefaults.buttonColors(
+                                 containerColor = if (comic.isRead) azul1 else naranja1
+                             ),
+                             modifier = Modifier.fillMaxWidth()
+                         ) {
+                             Text(
+                                 text = if (comic.isRead) "Leído" else "Pendiente",
+                                 style = MaterialTheme.typography.bodySmall
+                             )
+                         }*/
                         Button(
-                            onClick = { viewModel.toggleReadStatus(comic.id) },
+                            onClick = {
+                                // Le pasamos el ID del usuario actual (puedes sacarlo de Firebase Auth) y el objeto comic completo
+                                viewModel.toggleComicReadStatus(currentUserId, comic)
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (comic.isRead) azul1 else naranja1
                             ),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = if (comic.isRead) "Leído" else "Pendiente",
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                            Text(text = if (comic.isRead) "Leído" else "Pendiente")
                         }
                     }
                 }

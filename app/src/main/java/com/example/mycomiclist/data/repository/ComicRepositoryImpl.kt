@@ -2,10 +2,19 @@ package com.example.mycomiclist.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.mycomiclist.data.firestore.FirebaseComicsRepository
 import com.example.mycomiclist.domain.model.Comic
 import com.example.mycomiclist.domain.repository.ComicRepository
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.snapshots
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
 
-class ComicRepositoryImpl : ComicRepository {
+/*
+class ComicRepositoryImpl(
+    private val firestore: FirebaseFirestore
+) : ComicRepository {*/
 
     // Lista en memoria con unos cómics de prueba
     private val comicList = mutableListOf(
@@ -58,11 +67,21 @@ class ComicRepositoryImpl : ComicRepository {
             false
         )
     )
-
+/*
     private val _comicsLiveData = MutableLiveData<List<Comic>>(comicList)
 
-    override fun getAllComics(): LiveData<List<Comic>> = _comicsLiveData
+    //override fun getAllComics(): LiveData<List<Comic>> = _comicsLiveData
 
+    override fun getAllComics(userId: String): Flow<List<Comic>> {
+        // ... tu código de retorno de Firestore o memoria ...
+        return firestore.collection("users")
+            .document(userId)
+            .collection("comics")
+            .snapshots()
+            .map { snapshot -> snapshot.toObjects(Comic::class.java) }
+    }
+
+    /* Función anterior
     override fun toggleComicReadStatus(id: String) {
         val index = comicList.indexOfFirst { it.id == id }
         if (index != -1) {
@@ -71,5 +90,18 @@ class ComicRepositoryImpl : ComicRepository {
             // Notificamos el cambio a los observadores
             _comicsLiveData.value = ArrayList(comicList)
         }
+     */
+
+    fun toggleComicReadStatus(id: String) {
+        // Puedes dejarla vacía o borrarla por completo si ya no la usas en tus pantallas
     }
-}
+
+    override suspend fun updateComic(userId: String, comic: Comic) {
+        firestore.collection("users")
+            .document(userId)
+            .collection("comics")
+            .document(comic.id)
+            .set(comic)
+            .await()
+    }
+}*/
