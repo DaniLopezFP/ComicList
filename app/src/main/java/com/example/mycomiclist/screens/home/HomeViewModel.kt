@@ -9,11 +9,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val repository: ComicRepository,
     val userName: String,
-    private val userId: String,
+    val userId: String,
     val goToAddEditScreen: (Comic) -> Unit,
     val goBack: () -> Unit
 ) : ViewModel() {
@@ -22,9 +23,13 @@ class HomeViewModel(
     private val _contentIndex = MutableStateFlow(0)
     val contentIndex: StateFlow<Int> = _contentIndex
 
+
     // 🌟 COMBINACIÓN DE FLUJOS: Cómics en tiempo real filtrados por pestaña
     val comicList: StateFlow<List<Comic>> = repository.getAllComics(userId)
-        .stateIn(
+        .combine(_contentIndex) { comics, index ->
+            // 🌟 Llamamos a tu función de filtrado pasándole los datos reales
+            filterComicList(comics, index)
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
@@ -40,6 +45,14 @@ class HomeViewModel(
             1 -> comics.filter { it.isRead }       // Solo leídos
             2 -> comics.filter { !it.isRead }      // Solo pendientes
             else -> comics                         // Todos
+        }
+    }
+
+    fun toggleComicReadStatus(userId: String, comic: Comic) {
+        viewModelScope.launch {
+            // Hacemos una copia mutando solo el campo read
+            val nuevoComic = comic.copy(isRead = !comic.isRead)
+            repository.updateComic(userId, nuevoComic)
         }
     }
 }
