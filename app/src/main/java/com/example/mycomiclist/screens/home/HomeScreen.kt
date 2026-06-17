@@ -1,5 +1,6 @@
 package com.example.mycomiclist.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,39 +55,43 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
     val comicList by homeViewModel.comicList.collectAsStateWithLifecycle()
 
     Scaffold(
-       topBar = {
-           TopAppBar(
-               title = { Text("Mis Cómics (${homeViewModel.userName})") }
-           )
-       },
-       floatingActionButton = {
-           FloatingActionButton(
-               onClick = {
-                   homeViewModel.goToAddEditScreen(Comic())
-               }, containerColor = naranja1
-           ){
-               Icon(Icons.Default.Add, contentDescription = "Añadir Cómic")
-           }
-       },
-       bottomBar = {
-           // Tu componente HomeNavigationBar pasándole (contentIndex)
-           // Cuando cambie, llamará a homeViewModel.changeIndex(nuevoIndex)
-       }
-   ) { innerPadding ->
-       // Componente encargado de pintar la lista (ej: tu LazyVerticalGrid)
-       ComicContent(
-           paddingValues = innerPadding,
-           comics = comicList,
-           onComicClick = { selectedComic ->
-               homeViewModel.goToAddEditScreen(selectedComic) // Abre el formulario para editarlo
-           },
-           onToggleRead = { comicSeleccionado ->
-               // 🌟 Llamamos a la función del ViewModel que actualiza Firestore
-               // Le pasamos el ID del usuario actual y el objeto modificado
-               homeViewModel.toggleComicReadStatus(homeViewModel.userId, comicSeleccionado)
-           }
-       )
-   }
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Mis Cómics (${homeViewModel.userName})")
+                }
+
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    homeViewModel.goToAddEditScreen(Comic())
+                }, containerColor = naranja1
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Añadir Cómic")
+            }
+        },
+        bottomBar = {
+            // Tu componente HomeNavigationBar pasándole (contentIndex)
+            // Cuando cambie, llamará a homeViewModel.changeIndex(nuevoIndex)
+        },
+        containerColor = azul1
+    ) { innerPadding ->
+        // Componente encargado de pintar la lista (ej: tu LazyVerticalGrid)
+        ComicContent(
+            paddingValues = innerPadding,
+            comics = comicList,
+            onComicClick = { selectedComic ->
+                homeViewModel.goToAddEditScreen(selectedComic) // Abre el formulario para editarlo
+            },
+            onToggleRead = { comicSeleccionado ->
+                // 🌟 Llamamos a la función del ViewModel que actualiza Firestore
+                // Le pasamos el ID del usuario actual y el objeto modificado
+                homeViewModel.toggleComicReadStatus(homeViewModel.userId, comicSeleccionado)
+            }
+        )
+    }
 }
 
 @Composable
@@ -94,9 +99,8 @@ fun ComicContent(
     paddingValues: PaddingValues,
     comics: List<Comic>,
     onComicClick: (Comic) -> Unit,
-    onToggleRead: (Comic) -> Unit //Para cambiar a leído/pendiente
+    onToggleRead: (Comic) -> Unit, //Para cambiar a leído/pendiente
 ) {
-    // Usamos tu LazyVerticalGrid original aplicando los paddingValues del Scaffold
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -109,8 +113,7 @@ fun ComicContent(
         items(comics) { comic ->
             Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    ,
+                    .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = if (comic.isRead) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
                 )
@@ -128,7 +131,8 @@ fun ComicContent(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp).clickable {
+                            .height(180.dp)
+                            .clickable {
                                 // 🌟 Al pulsar la tarjeta, disparamos el evento hacia arriba para editar
                                 onComicClick(comic)
                             },

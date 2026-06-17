@@ -1,16 +1,22 @@
 package com.example.mycomiclist.screens.addedit
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycomiclist.domain.model.Comic
 import com.example.mycomiclist.domain.repository.ComicRepository
+import com.example.mycomiclist.domain.repository.SearchRepository
 import kotlinx.coroutines.launch
 
 class AddEditViewModel(private val inComic: Comic,
                        private val repository: ComicRepository,
                        private val userId: String,
+                       private val searchRepository: SearchRepository,
                        val navigateBack: () -> Unit
 ) : ViewModel() {
     // Estado del cómic que se está editando o creando
@@ -95,5 +101,40 @@ class AddEditViewModel(private val inComic: Comic,
             navigateBack()
         }
     }
+//Openlibrary
+// 🌟 CONTROL DE ESTADOS DE LA API (Págs 54 y 65)
+var apiUIState: ApiComicUIState by mutableStateOf(ApiComicUIState.Idle)
+    private set
 
+    sealed interface ApiComicUIState {
+        data class Success(val comic: Comic) : ApiComicUIState
+        object Error : ApiComicUIState
+        object Loading : ApiComicUIState
+        object Idle : ApiComicUIState
+    }
+
+    // 🌟 FUNCIÓN QUE LLAMA A LA API EN UN HILO SECUNDARIO
+    fun searchComicByIsbn() {
+        val isbnActual = _comic.value?.title ?: "" // Asegúrate de vincular tu campo de texto del ISBN
+
+        apiUIState = ApiComicUIState.Loading // 1. Cambiamos a cargando
+
+        viewModelScope.launch {
+            try {
+                // 2. Buscamos en la API de Open Library pasándole el texto del ISBN
+                val resultComic = searchRepository.getBookInfoByIsbn(isbnActual)
+                apiUIState = ApiComicUIState.Success(resultComic)
+
+                // 3. Rellenamos el formulario automáticamente manteniendo los datos estructurales
+                _comic.value = _comic.value?.copy(
+                    title = resultComic.title,
+                    author = resultComic.author,
+                    imageUrl = resultComic.imageUrl
+                )
+            } catch (e: Exception) {
+                apiUIState = ApiComicUIState.Error // 4. Capturamos fallos de red
+                Log.e("AddEditViewModel", "Error en la API: ${e.message}")
+            }
+        }
+    }
 }

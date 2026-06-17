@@ -33,6 +33,9 @@ fun AddEditScreen(addEditViewModel: AddEditViewModel) {
     val isError by addEditViewModel.isError.observeAsState(false)
     val isNew = addEditViewModel.isNewComic
 
+    // Recuperamos el estado de carga y error de la API
+    val apiUIState = addEditViewModel.apiUIState
+
     Column(
         modifier = Modifier
             .fillMaxSize()

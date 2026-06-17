@@ -18,6 +18,11 @@ services = "4.4.2"
 crashlytics = "3.0.2"
 navigation3 = "2.9.0-alpha01"
 navigation3Ui = "1.1.2"
+retrofit = "3.0.0"
+kotlinSerialization = "2.3.21"
+retrofit2KotlinxSerializationConverter = "1.0.0"
+kotlinxSerializationJson = "1.11.0"
+okhttp = "5.3.2"
 
 
 [libraries]
@@ -48,9 +53,14 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics"}
 firebase-auth = { module = "com.google.firebase:firebase-auth-ktx"}
 firebase-firestore = { module = "com.google.firebase:firebase-firestore"}
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3Ui" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref ="retrofit"}
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "services"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics"}
+jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}

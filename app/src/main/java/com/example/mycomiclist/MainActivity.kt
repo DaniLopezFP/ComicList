@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.mycomiclist.navigation.NavigationWrapper
 import com.example.mycomiclist.ui.theme.MyComicListTheme
+import com.example.mycomiclist.ui.theme.azul1
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
@@ -28,16 +29,15 @@ class MainActivity : ComponentActivity() {
             MyComicListTheme {
                 FirebaseApp.initializeApp(this)
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        color = colorScheme.background
-                    ) {
-                        NavigationWrapper()
-                    }
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                        //.padding(innerPadding),
+                    color = colorScheme.background
+                ) {
+                    NavigationWrapper()
                 }
+
             }
         }
     }
