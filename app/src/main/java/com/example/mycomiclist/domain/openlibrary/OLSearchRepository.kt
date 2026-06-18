@@ -7,7 +7,7 @@ import com.example.mycomiclist.domain.repository.SearchRepository
 
 class OLSearchRepository(private val apiService: OLSearchService) : SearchRepository {
 
-    override suspend fun getBookInfoByIsbn(isbn: String): Comic {
+    override suspend fun getComicInfoByIsbn(isbn: String): Comic {
         // Hacemos la llamada HTTP a la API y cogemos el primer documento coincidente (Pág 62)
         val response = apiService.getBookInfoByIsbn(isbn)
         return response.docs.first().toComic(isbn)

@@ -122,7 +122,7 @@ var apiUIState: ApiComicUIState by mutableStateOf(ApiComicUIState.Idle)
         viewModelScope.launch {
             try {
                 // 2. Buscamos en la API de Open Library pasándole el texto del ISBN
-                val resultComic = searchRepository.getBookInfoByIsbn(isbnActual)
+                val resultComic = searchRepository.getComicInfoByIsbn(isbnActual)
                 apiUIState = ApiComicUIState.Success(resultComic)
 
                 // 3. Rellenamos el formulario automáticamente manteniendo los datos estructurales

@@ -13,7 +13,9 @@ import androidx.navigation.navArgument
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.example.mycomiclist.data.firestore.FirebaseComicsRepository
+import com.example.mycomiclist.data.openlibrary.search.OLSearchApi
 import com.example.mycomiclist.domain.model.Comic
+import com.example.mycomiclist.domain.openlibrary.OLSearchRepository
 import com.example.mycomiclist.screens.addedit.AddEditScreen
 import com.example.mycomiclist.screens.addedit.AddEditViewModel
 import com.example.mycomiclist.screens.comiclist.ComicListScreen
@@ -95,16 +97,20 @@ fun NavigationWrapper() {
             val comicId = backStackEntry.arguments?.getString("comicId") ?: "new"
             val placeholderComic = Comic(id = if (comicId == "new") "" else comicId)
 
+            //Instancia del repositorio
+            val searchRepository = OLSearchRepository(OLSearchApi.searchService)
+
             val addEditViewModel = remember {
                 AddEditViewModel(
                     inComic = placeholderComic,
                     repository = repository,
+                    searchRepository = searchRepository,
                     userId = auth.currentUser?.uid ?: "",
                     navigateBack = { navController.popBackStack() }
                 )
             }
 
-            // 🌟 ¡FALTABA ESTO!: Llamar a la pantalla pasándole el ViewModel que acabamos de crear
+            // Llamar a la pantalla pasándole el ViewModel que acabamos de crear
             AddEditScreen(addEditViewModel = addEditViewModel)
         }
     }
