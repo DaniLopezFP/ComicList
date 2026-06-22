@@ -4,9 +4,18 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mycomiclist.domain.model.UserStats
+import com.example.mycomiclist.domain.repository.UserStatsRepository
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
+class LoginViewModel(
+    private val auth: FirebaseAuth,
+    private val userStatsRepository: UserStatsRepository, //variable para los datos de ROOM
+) : ViewModel() {
 
     // Estados con valor inicial vacío para evitar NullPointerException
     private val _userName = MutableLiveData<String>("")
@@ -38,7 +47,29 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
         ).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i("Login button", "User logged: ${auth.currentUser?.email}")
-                navigateToHome(_userName.value.toString())
+                //navigateToHome(_userName.value.toString())
+                viewModelScope.launch {
+                    try {
+                        val currentDateTime = LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                        )
+
+                        // Guardamos las estadísticas locales (Pág 54, 1625)
+                        userStatsRepository.addUserStats(
+                            UserStats(
+                                id = auth.currentUser?.uid ?: "",
+                                lastConnection = currentDateTime,   // Atributo 1
+                                totalReadComics = 0,                // Atributo 2 (Se recalculará en el Home)
+                                favoriteGenre = "Por determinar"    // Atributo 3
+                            )
+                        )
+                    } catch (e: Exception) {
+                        Log.e("ROOM_ERROR", "Fallo al guardar conexión local: ${e.message}")
+                    } finally {
+                        // Navegamos una vez termine el proceso local (Pág 1625)
+                        navigateToHome(_userName.value.toString())
+                    }
+                }
             } else {
                 Log.i("Login button", "User login failed: ${it.exception.toString()}")
                 _errorMessage.value = it.exception?.localizedMessage ?: "Error de autenticación"
@@ -56,9 +87,30 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
         ).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.i("Register button", "User registered with ID: ${auth.currentUser?.uid}")
+                viewModelScope.launch {
+                    try {
+                        val currentDateTime = LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                        )
 
+                        // Insertamos la entrada inicial en la tabla preferences de Room (Pág 1623, 1676)
+                        userStatsRepository.addUserStats(
+                            UserStats(
+                                id = auth.currentUser?.uid ?: "",
+                                lastConnection = currentDateTime,
+                                totalReadComics = 0,
+                                favoriteGenre = "Por determinar"
+                            )
+                        )
+                    } catch (e: Exception) {
+                        Log.e("ROOM_ERROR", "Fallo al inicializar ROOM: ${e.message}")
+                    } finally {
+                        // Avanzamos a la pantalla Home (Pág 1625)
+                        navigateToHome(_userName.value.toString())
+                    }
+                }
                 // CRUCIAL: Si el registro es correcto, navegamos directos pasando el email
-                navigateToHome(_userName.value.toString())
+                //navigateToHome(_userName.value.toString())
             } else {
                 Log.i("Register button", "Registry failed ${task.exception.toString()}")
 

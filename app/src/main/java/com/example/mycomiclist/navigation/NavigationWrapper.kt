@@ -2,6 +2,7 @@ package com.example.mycomiclist.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +14,8 @@ import androidx.navigation.navArgument
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.example.mycomiclist.data.firestore.FirebaseComicsRepository
+import com.example.mycomiclist.data.local.LocalUserStatsRepository
+import com.example.mycomiclist.data.local.database.UserStatsDatabase
 import com.example.mycomiclist.data.openlibrary.search.OLSearchApi
 import com.example.mycomiclist.domain.model.Comic
 import com.example.mycomiclist.domain.openlibrary.OLSearchRepository
@@ -40,18 +43,33 @@ data class ComicList(val userName: String) : NavKey
 @Composable
 fun NavigationWrapper() {
     val navController = rememberNavController()
+    val context = LocalContext.current.applicationContext
 
     // 1. Instancias únicas (Singletons)
     val auth = FirebaseAuth.getInstance()
     val firestore = FirebaseFirestore.getInstance()
     val repository = FirebaseComicsRepository(firestore)
 
+//Variables para ROOM
+    val userStatsDao = remember { UserStatsDatabase.getDatabase(context).userStatsDao() }
+    val localStatsRepository = remember { LocalUserStatsRepository(userStatsDao) }
+
     // 3. Definimos el contenedor de navegación (Empezamos en la pantalla de Login)
     NavHost(navController = navController, startDestination = "login") {
 
         // --- PANTALLA 1: LOGIN ---
         composable("login") {
-            val loginViewModel = remember { LoginViewModel(auth) }
+            // Contexto
+            val context = LocalContext.current.applicationContext
+
+            // Variable de la instancia de ROOM y su DAO de forma segura
+            val userStatsDao = remember { UserStatsDatabase.getDatabase(context).userStatsDao() }
+
+            // Construimos el repositorio local
+            val userStatsRepository = remember { LocalUserStatsRepository(userStatsDao) }
+
+            val loginViewModel =
+                remember { LoginViewModel(auth, userStatsRepository = userStatsRepository) }
             LoginScreen(
                 loginViewModel = loginViewModel,
                 doLogin = { email ->
@@ -76,6 +94,7 @@ fun NavigationWrapper() {
                 homeViewModel = remember {
                     HomeViewModel(
                         repository = repository,
+                        userStatsRepository = localStatsRepository,
                         userName = userName,
                         userId = auth.currentUser?.uid ?: "",
                         goToAddEditScreen = { comic ->

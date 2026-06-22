@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -29,22 +30,31 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.mycomiclist.domain.model.Comic
 import com.example.mycomiclist.ui.theme.azul1
 import com.example.mycomiclist.ui.theme.azulLight
+import com.example.mycomiclist.ui.theme.grisLight
 import com.example.mycomiclist.ui.theme.naranja1
 import com.example.mycomiclist.ui.theme.naranjaLight
+import com.example.mycomiclist.ui.theme.rojo1
+import com.example.mycomiclist.ui.theme.verde1
 import com.example.mycomiclist.ui.theme.verdeLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,13 +64,37 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
     val contentIndex by homeViewModel.contentIndex.collectAsStateWithLifecycle()
     val comicList by homeViewModel.comicList.collectAsStateWithLifecycle()
 
+    //Valores del usuario
+    val stats by homeViewModel.userStats.collectAsStateWithLifecycle()
+
+    //Colores texto
+    val rainbowColors: List<Color> =
+        listOf(rojo1, azul1, verde1, naranja1)
+
+    val brush = remember {
+        Brush.linearGradient(
+            colors = rainbowColors
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
+                //colors = TopAppBarDefaults.topAppBarColors(containerColor = grisLight),
                 title = {
-                    Text("Mis Cómics (${homeViewModel.userName})")
-                }
+                    val shortName = homeViewModel.userName.substringBefore("@")
+                    //Text("Mis Cómics (${homeViewModel.userName})")
+                    Row(){
+                        Text(
+                            "Mis Cómics: ",
+                            style = TextStyle(fontSize = 20.sp)
+                        )
+                        Text("$shortName",
+                            style = TextStyle(brush = brush, fontSize = 20.sp)
+                        )
+                    }
 
+                }
             )
         },
         floatingActionButton = {
@@ -73,8 +107,16 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             }
         },
         bottomBar = {
-            // Tu componente HomeNavigationBar pasándole (contentIndex)
-            // Cuando cambie, llamará a homeViewModel.changeIndex(nuevoIndex)
+            Row(modifier = Modifier.padding(start = 10.dp)) {
+                Text(
+                    text = "Último acceso: ${stats.lastConnection}",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 15.sp,
+                    color = Color.White
+                )
+                // Tu componente HomeNavigationBar pasándole (contentIndex)
+                // Cuando cambie, llamará a homeViewModel.changeIndex(nuevoIndex)
+            }
         },
         containerColor = azul1
     ) { innerPadding ->

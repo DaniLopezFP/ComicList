@@ -23,6 +23,8 @@ kotlinSerialization = "2.3.21"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 kotlinxSerializationJson = "1.11.0"
 okhttp = "5.3.2"
+room = "2.8.4"
+ksp = "2.3.9"
 
 
 [libraries]
@@ -57,6 +59,10 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref ="retrofit"
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+androidx-room-ktx = { group ="androidx.room", name = "room-ktx", version.ref ="room" }
+androidx-room-runtime = { group ="androidx.room", name ="room-runtime", version.ref ="room" }
+androidx-room-compiler = { group ="androidx.room", name ="room-compiler", version.ref ="room" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -64,3 +70,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 googleServices = { id = "com.google.gms.google-services", version.ref = "services"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics"}
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref ="ksp"}

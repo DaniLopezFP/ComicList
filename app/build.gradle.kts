@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.crashlytics)
     //alias(libs.plugins.jetbrains.kotlin.serialization)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+    alias(libs.plugins.kotlin.ksp)
 
 }
 
@@ -78,6 +79,10 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
+    // ROOM
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
